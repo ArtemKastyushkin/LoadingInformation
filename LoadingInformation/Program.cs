@@ -1,15 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Npgsql;
 
-namespace LoadingInformation
-{
-    internal class Program
-    {
-        static void Main(string[] args)
-        {
-        }
-    }
-}
+ConnectionConfigXML connectionConfigXML = new ConnectionConfigXML("D:\\VisualStudioProjects\\LoadingInformation_TestTask\\db_config.xml");
+
+Database db = new Database(connectionConfigXML);
+
+return 0;
