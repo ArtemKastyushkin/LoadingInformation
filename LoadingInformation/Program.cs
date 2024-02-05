@@ -6,5 +6,6 @@ userObject.Fullname = "Иванов Иван Иванович";
 userObject.Email = "abc@email.com";
 
 db.Insert(userObject);
+Console.WriteLine(db.GetId(userObject));
 
 return 0;
