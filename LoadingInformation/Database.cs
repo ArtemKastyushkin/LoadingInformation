@@ -5,7 +5,6 @@ public class Database
 {
     private string _connectionString;
     private NpgsqlConnection _connection;
-    private NpgsqlCommand _command;
 
     private void connect()
     {
@@ -21,5 +20,23 @@ public class Database
         _connectionString = connectionConfig.GetConnectionString();
 
         connect();
+    }
+
+    public void Insert(TableObject tableObject)
+    {
+        connect();
+
+        NpgsqlCommand command = tableObject.GetInsertCommand();
+        command.Connection = _connection;
+
+        try
+        {
+            command.ExecuteNonQuery();
+        }
+        catch (NpgsqlException ex) 
+        { 
+            Console.WriteLine(ex.Message);
+            _connection.Close();
+        }
     }
 }
