@@ -1,8 +1,8 @@
 ﻿ConnectionConfigXML connectionConfigXML = new ConnectionConfigXML("D:\\VisualStudioProjects\\LoadingInformation_TestTask\\db_config.xml");
-Database db = new Database(connectionConfigXML);
+Database database = new Database(connectionConfigXML);
 
-UserObject userObject = new UserObject("Иванов Иван Иванович", "abc@email.com");
+ParserXML parserXML = new ParserXML("D:\\VisualStudioProjects\\LoadingInformation_TestTask\\data_for_loading.xml");
 
-db.Insert(userObject);
+database.InsertOrdersList(parserXML.GetOrdersList(database));
 
 return 0;

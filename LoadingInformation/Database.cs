@@ -59,6 +59,19 @@ public class Database
             return -1;
         }
 
-        return reader.Read() ? reader.GetInt32(0) : -1;
+        int id = reader.Read() ? reader.GetInt32(0) : -1;
+
+        _connection.Close();
+
+        return id;
+    }
+
+    public void InsertOrdersList((List<OrderObject> ordersList, List<PositionObject> positionsList) orders)
+    {
+        foreach (OrderObject order in orders.ordersList) 
+            Insert(order);
+
+        foreach (PositionObject position in orders.positionsList)
+            Insert(position);
     }
 }
