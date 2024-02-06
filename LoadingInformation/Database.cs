@@ -16,22 +16,26 @@ public class Database
         _connection = new NpgsqlConnection(connectionConfig.GetConnectionString());
     }
 
-    public void Insert(TableObject tableObject)
+    public int Insert(TableObject tableObject)
     {
         connect();
 
         NpgsqlCommand command = tableObject.GetInsertCommand();
         command.Connection = _connection;
 
+        int affectedRowsCount = 0;
+
         try
         {
-            command.ExecuteNonQuery();
+            affectedRowsCount = command.ExecuteNonQuery();
         }
         catch (NpgsqlException ex) 
         { 
             Console.WriteLine(ex.Message);
             _connection.Close();
         }
+
+        return affectedRowsCount;
     }
 
     public int GetId(IIdentifiable identifiableTableObject)

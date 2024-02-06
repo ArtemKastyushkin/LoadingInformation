@@ -1,10 +1,15 @@
 ﻿using Npgsql;
+using System.Diagnostics.CodeAnalysis;
 
 public class UserObject : TableObject, IIdentifiable
 {
     public long Id { get; set; }
-    public string Fullname { get; set; }
-    public string Email { get; set; }
+    public required string Fullname { get; set; }
+    public required string Email { get; set; }
+
+    [SetsRequiredMembers]
+    public UserObject(string fullname, string email) =>
+        (Fullname, Email) = (fullname, email);
 
     public NpgsqlCommand GetIdCommand()
     {
