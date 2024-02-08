@@ -22,4 +22,14 @@ public class OrderObject : TableObject
 
         return command;
     }
+
+    public override NpgsqlCommand GetSelectCommand()
+    {
+        NpgsqlCommand command = new NpgsqlCommand("SELECT id, user_id, sum, reg_date FROM orders WHERE user_id=@user_id AND sum=@sum AND reg_date=@reg_date);");
+        command.Parameters.AddWithValue("user_id", UserId);
+        command.Parameters.AddWithValue("sum", Sum);
+        command.Parameters.AddWithValue("reg_date", RegDate);
+
+        return command;
+    }
 }

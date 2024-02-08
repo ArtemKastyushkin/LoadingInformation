@@ -11,6 +11,28 @@ public class Database
             _connection.Open();
     }
 
+    private NpgsqlDataReader? select(TableObject tableObject)
+    {
+        connect();
+
+        NpgsqlCommand command = tableObject.GetSelectCommand();
+        command.Connection = _connection;
+
+        NpgsqlDataReader? reader = null;
+
+        try
+        {
+            reader = command.ExecuteReader();
+        }
+        catch (NpgsqlException ex)
+        {
+            Console.WriteLine(ex.Message);
+            _connection.Close();
+        }
+
+        return reader;
+    }
+
     public Database(ConnectionConfig connectionConfig)
     {
         _connection = new NpgsqlConnection(connectionConfig.GetConnectionString());
@@ -38,32 +60,43 @@ public class Database
         return affectedRowsCount;
     }
 
-    public int GetId(IIdentifiable identifiableTableObject)
+    public long GetId(TableObject tableObject)
     {
-        connect();
+        NpgsqlDataReader? reader = select(tableObject);
 
-        NpgsqlCommand command = identifiableTableObject.GetIdCommand();
-        command.Connection = _connection;
+        if (reader == null)
+            return -1;
 
-        NpgsqlDataReader reader;
+        long id = -1;
+        reader.Read();
 
         try
         {
-            reader = command.ExecuteReader();
+            id = Convert.ToInt64(reader["id"]);
         }
-        catch (NpgsqlException ex)
+        catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
             _connection.Close();
-
-            return -1;
         }
 
-        int id = reader.Read() ? reader.GetInt32(0) : -1;
-
-        _connection.Close();
+        reader.Close();
 
         return id;
+    }
+
+    public bool IsExist(TableObject tableObject)
+    {
+        NpgsqlDataReader? reader = select(tableObject);
+
+        if (reader == null)
+            return false;
+
+        bool isExist = reader.Read();
+
+        reader.Close();
+
+        return isExist;
     }
 
     public void InsertOrdersList((List<OrderObject> ordersList, List<PositionObject> positionsList) orders)

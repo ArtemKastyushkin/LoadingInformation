@@ -33,7 +33,7 @@ public class ParserXML : Parser
         return new PositionObject(database.GetId(product), orderId, productQuantity);
     }
 
-    private int parseUser(XmlNode xmlNode, Database database)
+    private long parseUser(XmlNode xmlNode, Database database)
     {
         string userFullname = string.Empty;
         string userEmail = string.Empty;
@@ -84,6 +84,8 @@ public class ParserXML : Parser
                 decimal orderSum = 0.0m;
                 DateTime orderRegDate = DateTime.MinValue;
 
+                int productsCount = 0;
+
                 foreach(XmlNode childNode in node.ChildNodes)
                 {
                     switch (childNode.Name)
@@ -98,7 +100,15 @@ public class ParserXML : Parser
                             orderSum = Convert.ToDecimal(childNode.InnerText.Replace(".", ","));
                             break;
                         case "product":
-                            positionsList.Add(parseProduct(childNode, database, orderId));
+
+                            PositionObject position = parseProduct(childNode, database, orderId);
+
+                            if (database.IsExist(position) == false)
+                            {
+                                positionsList.Add(position);
+                                productsCount++;
+                            }
+
                             break;
                         case "user":
                             userId = parseUser(childNode, database);
@@ -108,7 +118,8 @@ public class ParserXML : Parser
                     }
                 }
 
-                ordersList.Add(new OrderObject(orderId, userId, orderSum, orderRegDate));
+                if (productsCount > 0)
+                    ordersList.Add(new OrderObject(orderId, userId, orderSum, orderRegDate));
             }
         }
 

@@ -20,4 +20,14 @@ public class PositionObject : TableObject
 
         return command;
     }
+
+    public override NpgsqlCommand GetSelectCommand()
+    {
+        NpgsqlCommand command = new NpgsqlCommand("SELECT product_id, order_id, quantity FROM positions WHERE product_id=@product_id AND order_id=@order_id AND quantity=@quantity;");
+        command.Parameters.AddWithValue("product_id", ProductId);
+        command.Parameters.AddWithValue("order_id", OrderId);
+        command.Parameters.AddWithValue("quantity", Quantity);
+
+        return command;
+    }
 }
